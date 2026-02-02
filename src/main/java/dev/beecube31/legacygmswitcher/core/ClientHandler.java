@@ -10,9 +10,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,7 +24,6 @@ import org.lwjgl.input.Mouse;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class ClientHandler extends Gui {
 
     private static class GameModeInfo {
@@ -76,14 +75,14 @@ public class ClientHandler extends Gui {
     private String lastGameModeName = null;
 
     public ClientHandler() {
-        gameModes.add(new GameModeInfo("gameMode.creative", "creative", new ItemStack(Blocks.GRASS)));
-        gameModes.add(new GameModeInfo("gameMode.survival", "survival", new ItemStack(Items.IRON_SWORD)));
-        gameModes.add(new GameModeInfo("gameMode.adventure", "adventure", new ItemStack(Items.MAP)));
-        gameModes.add(new GameModeInfo("gameMode.spectator", "spectator", new ItemStack(Items.ENDER_EYE)));
+        gameModes.add(new GameModeInfo("gameMode.creative", "creative", new ItemStack(Blocks.grass)));
+        gameModes.add(new GameModeInfo("gameMode.survival", "survival", new ItemStack(Items.iron_sword)));
+        gameModes.add(new GameModeInfo("gameMode.adventure", "adventure", new ItemStack(Items.map)));
+        gameModes.add(new GameModeInfo("gameMode.spectator", "spectator", new ItemStack(Items.ender_eye)));
     }
 
     private boolean hasPermission() {
-        return mc.player != null && mc.player.canUseCommand(2, "gamemode");
+        return mc.thePlayer != null;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -93,9 +92,9 @@ public class ClientHandler extends Gui {
             if (Keyboard.isKeyDown(Keyboard.KEY_F3)) {
                 if (!isVisible) {
                     if (!hasPermission()) {
-                        TextComponentString textComp = new TextComponentString(I18n.format("debug.gamemodes.error"));
-                        textComp.getStyle().setColor(TextFormatting.RED);
-                        mc.player.sendMessage(textComp);
+                        ChatComponentText textComp = new ChatComponentText(I18n.format("debug.gamemodes.error"));
+                        textComp.getChatStyle().setColor(EnumChatFormatting.RED);
+                        mc.thePlayer.addChatComponentMessage(textComp);
                         return;
                     }
                     openMenu();
@@ -123,11 +122,11 @@ public class ClientHandler extends Gui {
 
     @SubscribeEvent
     public void onGameOverlayEv(RenderGameOverlayEvent.Post event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.TEXT || !isVisible) {
+        if (event.type != RenderGameOverlayEvent.ElementType.TEXT || !isVisible) {
             return;
         }
 
-        ScaledResolution res = event.getResolution();
+        ScaledResolution res = event.resolution;
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
 
@@ -158,11 +157,7 @@ public class ClientHandler extends Gui {
 
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(
-                GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE,
-                GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
         mc.getTextureManager().bindTexture(TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -171,7 +166,7 @@ public class ClientHandler extends Gui {
 
         String modeName = I18n.format(gameModes.get(selectedIndex).translationKey);
 
-        drawCenteredString(mc.fontRenderer, modeName, centerX, windowY + 7, 0xFFFFFF);
+        drawCenteredString(mc.fontRendererObj, modeName, centerX, windowY + 7, 0xFFFFFF);
 
         for (int i = 0; i < count; i++) {
             int x = slotsStartX + i * (renderSlotSize) + i * 5;
@@ -193,7 +188,7 @@ public class ClientHandler extends Gui {
             RenderHelper.disableStandardItemLighting();
         }
 
-        drawCenteredString(mc.fontRenderer, I18n.format("debug.gamemodes.select_next", "§b" + I18n.format("debug.gamemodes.press_f4") + "§r -"),
+        drawCenteredString(mc.fontRendererObj, I18n.format("debug.gamemodes.select_next", "§b" + I18n.format("debug.gamemodes.press_f4") + "§r -"),
                 centerX, windowY + windowHeight - 12, 0xAAAAAA);
 
         GlStateManager.disableBlend();
@@ -248,7 +243,7 @@ public class ClientHandler extends Gui {
             }
 
             if (lastGameModeName == null || !lastGameModeName.equalsIgnoreCase(targetMode.commandName)) {
-                mc.player.sendChatMessage("/gamemode " + targetMode.commandName);
+                mc.thePlayer.sendChatMessage("/gamemode " + targetMode.commandName);
                 closeMenu();
             }
         }

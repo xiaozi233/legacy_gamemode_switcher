@@ -1,6 +1,5 @@
 package dev.beecube31.legacygmswitcher.core;
 
-import dev.beecube31.legacygmswitcher.Tags;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -8,12 +7,15 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(
-		modid = Tags.MODID,
-		version = Tags.VERSION,
-		name = Tags.MODNAME,
-        acceptedMinecraftVersions = "[1.10,1.13)"
+		modid = LegacyGMS.MODID,
+		version = LegacyGMS.VERSION,
+		name = LegacyGMS.MODNAME,
+        acceptedMinecraftVersions = "[1.8,1.9)"
 )
 public class LegacyGMS {
+	public static final String MODID = "legacy_gm_switcher";
+	public static final String VERSION = "v0.1";
+	public static final String MODNAME = "Legacy Gamemode Switcher";
 	public static LegacyGMS instance;
 
 	@EventHandler
