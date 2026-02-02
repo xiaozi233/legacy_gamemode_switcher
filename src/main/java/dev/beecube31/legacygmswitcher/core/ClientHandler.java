@@ -65,7 +65,7 @@ public class ClientHandler extends Gui {
         }
     }
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/gamemode_switcher.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(LegacyGMS.MODID,"textures/gui/container/gamemode_switcher.png");
 
     private boolean isVisible = false;
     private int selectedIndex = 0;
